@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Habit Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            margin: 20px auto;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .user-select {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .user-btn {
+            flex: 1;
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .user-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .user-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .start-btn, .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .start-btn:hover, .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .date-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            color: white;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: #e0e0e0;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #d0d0d0;
+        }
+
+        /* استایل فرم */
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+.time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* ستاره‌های کیفیت خواب */
+        .stars {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .star {
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            filter: grayscale(100%);
+        }
+
+        .star.active {
+            filter: grayscale(0%);
+            transform: scale(1.2);
+        }
+
+        /* رادیو باتن‌های غذا */
+        .meal-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .meal-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .meal-option:hover {
+            border-color: #667eea;
+        }
+
+        .meal-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        /* چک‌باکس نماز */
+        .prayer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .prayer-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .prayer-item:hover {
+            background: #f0f0f0;
+        }
+
+        .prayer-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* اسلایدر رضایت */
+        .satisfaction-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4);
+            outline: none;
+            -webkit-appearance: none;
+            margin: 20px 0;
+        }
+
+        .satisfaction-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .satisfaction-display {
+            text-align: center;
+            font-size: 3em;
+            margin: 10px 0;
+        }
+
+        .number-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .number-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- صفحه ورود -->
+    <div id="loginScreen" class="container">
+        <h1> Habit Tracker</h1>
+        <p class="subtitle">ردیاب عادت‌های روزانه</p>
+        
+        <div class="user-select">
+            <div class="user-btn" onclick="selectUser('user1')" id="user1Btn">
+                 کاربر 1
+            </div>
+            <div class="user-btn" onclick="selectUser('user2')" id="user2Btn">
+                 کاربر 2
+            </div>
+        </div>
+
+<button class="start-btn" id="startBtn" disabled onclick="startApp()">
+            شروع کنیم! 
+        </button>
+    </div>
+
+    <!-- صفحه فرم -->
+    <div id="mainScreen" class="container hidden">
+        <button class="back-btn" onclick="logout()">← بازگشت</button>
+        <div class="date-display" id="dateDisplay"></div>
+
+        <!-- بخش خواب -->
+        <div class="form-section">
+            <div class="section-title"> خواب</div>
+            <div class="time-inputs">
+                <div class="input-group">
+                    <label>ساعت خواب:</label>
+                    <input type="time" id="bedTime" value="23:00">
+                </div>
+                <div class="input-group">
+                    <label>ساعت بیدار شدن:</label>
+                    <input type="time" id="wakeTime" value="07:00">
+                </div>
+            </div>
+            <label style="display: block; text-align: center; margin-bottom: 10px; color: #555;">
+                کیفیت خواب:
+            </label>
+            <div class="stars" id="sleepQuality">
+                <span class="star" onclick="setSleepQuality(1)">⭐</span>
+                <span class="star" onclick="setSleepQuality(2)">⭐</span>
+                <span class="star" onclick="setSleepQuality(3)">⭐</span>
+                <span class="star" onclick="setSleepQuality(4)">⭐</span>
+                <span class="star" onclick="setSleepQuality(5)">⭐</span>
+            </div>
+        </div>
+
+        <!-- بخش غذا -->
+        <div class="form-section">
+            <div class="section-title">️ تغذیه</div>
+            
+            <label style="color: #555; margin-bottom: 8px; display: block;">صبحانه:</label>
+            <div class="meal-options" id="breakfast">
+                <div class="meal-option" onclick="setMeal('breakfast', 0)">نخوردم</div>
+                <div class="meal-option" onclick="setMeal('breakfast', 1)">کم خوردم</div>
+                <div class="meal-option selected" onclick="setMeal('breakfast', 2)">خوب خوردم</div>
+            </div>
+
+            <label style="color: #555; margin-bottom: 8px; display: block;">ناهار:</label>
+            <div class="meal-options" id="lunch">
+                <div class="meal-option" onclick="setMeal('lunch', 0)">نخوردم</div>
+                <div class="meal-option" onclick="setMeal('lunch', 1)">کم خوردم</div>
+                <div class="meal-option selected" onclick="setMeal('lunch', 2)">خوب خوردم</div>
+            </div>
+
+            <label style="color: #555; margin-bottom: 8px; display: block;">شام:</label>
+            <div class="meal-options" id="dinner">
+                <div class="meal-option" onclick="setMeal('dinner', 0)">نخوردم</div>
+                <div class="meal-option" onclick="setMeal('dinner', 1)">کم خوردم</div>
+                <div class="meal-option selected" onclick="setMeal('dinner', 2)">خوب خوردم</div>
+            </div>
+
+            <div class="input-group" style="margin-top: 15px;">
+                <label> تعداد لیوان آب:</label>
+                <input type="number" class="number-input" id="waterGlasses" value="8" min="0" max="20">
+            </div>
+        </div>
+
+        <!-- بخش نماز -->
+        <div class="form-section">
+            <div class="section-title"> نماز</div>
+            <div class="prayer-grid">
+                <label class="prayer-item">
+                    <input type="checkbox" class="prayer-checkbox" id="fajr" checked>
+                    <span>صبح</span>
+                </label>
+                <label class="prayer-item">
+                    <input type="checkbox" class="prayer-checkbox" id="dhuhr" checked>
+                    <span>ظهر</span>
+                </label>
+                <label class="prayer-item">
+                    <input type="checkbox" class="prayer-checkbox" id="asr">
+
+<span>عصر</span>
+                </label>
+                <label class="prayer-item">
+                    <input type="checkbox" class="prayer-checkbox" id="maghrib" checked>
+                    <span>مغرب</span>
+                </label>
+                <label class="prayer-item">
+                    <input type="checkbox" class="prayer-checkbox" id="isha" checked>
+                    <span>عشا</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- بخش مطالعه -->
+        <div class="form-section">
+            <div class="section-title"> مطالعه</div>
+            <div class="input-group">
+                <label>تعداد ساعت:</label>
+                <input type="number" class="number-input" id="studyHours" value="2" min="0" max="24" step="0.5">
+            </div>
+        </div>
+
+        <!-- بخش رضایت -->
+        <div class="form-section">
+            <div class="section-title"> رضایت از روز</div>
+            <div class="satisfaction-display" id="satisfactionEmoji"></div>
+            <input type="range" class="satisfaction-slider" id="satisfaction" 
+                   min="1" max="4" value="3" oninput="updateSatisfaction(this.value)">
+        </div>
+
+        <button class="submit-btn" onclick="submitDay()">
+             ثبت روز
+        </button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let sleepQualityValue = 0;
+        let mealData = {
+            breakfast: 2,
+            lunch: 2,
+            dinner: 2
+        };
+
+        const satisfactionEmojis = ['', '‍', '', ''];
+
+        // انتخاب کاربر
+        function selectUser(user) {
+            currentUser = user;
+            document.getElementById('user1Btn').classList.remove('active');
+            document.getElementById('user2Btn').classList.remove('active');
+            document.getElementById(user + 'Btn').classList.add('active');
+            document.getElementById('startBtn').disabled = false;
+        }
+
+        // شروع برنامه
+        function startApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainScreen').classList.remove('hidden');
+            
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dateDisplay').textContent = 
+                ' ' + today.toLocaleDateString('fa-IR', options);
+        }
+
+        // خروج
+        function logout() {
+            document.getElementById('mainScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            currentUser = null;
+        }
+
+        // تنظیم کیفیت خواب
+        function setSleepQuality(value) {
+            sleepQualityValue = value;
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // تنظیم وعده غذایی
+        function setMeal(mealType, value) {
+            mealData[mealType] = value;
+            const options = document.getElementById(mealType).children;
+            for (let i = 0; i < options.length; i++) {
+                options[i].classList.remove('selected');
+            }
+            options[value].classList.add('selected');
+        }
+
+        // تغییر رضایت
+        function updateSatisfaction(value) {
+            document.getElementById('satisfactionEmoji').textContent = 
+                satisfactionEmojis[value - 1];
+        }
+
+        // ثبت روز
+        function submitDay() {
+            const data = {
+                user: currentUser,
+
+date: new Date().toISOString().split('T')[0],
+                bedTime: document.getElementById('bedTime').value,
+                wakeTime: document.getElementById('wakeTime').value,
+                sleepQuality: sleepQualityValue,
+                breakfast: mealData.breakfast,
+                lunch: mealData.lunch,
+                dinner: mealData.dinner,
+                water: document.getElementById('waterGlasses').value,
+                prayers: {
+                    fajr: document.getElementById('fajr').checked,
+                    dhuhr: document.getElementById('dhuhr').checked,
+                    asr: document.getElementById('asr').checked,
+                    maghrib: document.getElementById('maghrib').checked,
+                    isha: document.getElementById('isha').checked
+                },
+                study: document.getElementById('studyHours').value,
+                satisfaction: document.getElementById('satisfaction').value
+            };
+
+            console.log('✅ داده ثبت شد:', data);
+            alert(' روز شما با موفقیت ثبت شد!\n\nداده‌ها در Console قابل مشاهده است (F12)');
+            
+            // اینجا بعداً به LocalStorage ذخیره می‌کنیم
+        }
+    </script>
+</body>
+</html>
